@@ -39,26 +39,7 @@ export function BrowsePage() {
 
       {/* The big comparison */}
       <section className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {/* GoFundMe side */}
-        <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 space-y-4">
-          <div className="text-sm font-semibold text-gray-500 uppercase tracking-wider">Traditional platforms</div>
-          <ul className="space-y-3 text-sm text-gray-400">
-            {[
-              'You donate and receive a thank-you email.',
-              'The money enters the organization\'s bank account.',
-              'You have no way to verify it reached the right person.',
-              'You trust the receipt is real — you just never see it.',
-              'Funds could be redirected. You\'d never know.',
-            ].map((item) => (
-              <li key={item} className="flex gap-2">
-                <span className="text-red-500 shrink-0 mt-0.5">✗</span>
-                <span>{item}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* GivingChain side */}
+        {/* GivingChain side — first */}
         <div className="bg-gray-900 border border-green-900 rounded-2xl p-6 space-y-4">
           <div className="text-sm font-semibold text-green-500 uppercase tracking-wider">GivingChain</div>
           <ul className="space-y-3 text-sm text-gray-300">
@@ -71,6 +52,25 @@ export function BrowsePage() {
             ].map((item) => (
               <li key={item} className="flex gap-2">
                 <span className="text-green-400 shrink-0 mt-0.5">✓</span>
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Traditional platforms side */}
+        <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 space-y-4">
+          <div className="text-sm font-semibold text-gray-500 uppercase tracking-wider">Traditional platforms</div>
+          <ul className="space-y-3 text-sm text-gray-400">
+            {[
+              'You donate and receive a thank-you email.',
+              "The money enters the organization's bank account.",
+              'You have no way to verify it reached the right person.',
+              'You trust the receipt is real — you just never see it.',
+              "Funds could be redirected. You'd never know.",
+            ].map((item) => (
+              <li key={item} className="flex gap-2">
+                <span className="text-red-500 shrink-0 mt-0.5">✗</span>
                 <span>{item}</span>
               </li>
             ))}
