@@ -6,6 +6,7 @@ import { formatUsdc, NEED_STATUS, ADDRESSES } from '@/lib/contracts'
 import { Loader2, ExternalLink, ShieldCheck, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import { DemoFaucet } from './DemoFaucet'
+import { DemoTutorial } from './DemoTutorial'
 
 export function BrowsePage() {
   const { count, isLoading: countLoading } = useNeedCount()
@@ -24,6 +25,9 @@ export function BrowsePage() {
 
   return (
     <div className="space-y-14">
+
+      {/* Step-by-step demo guide */}
+      <DemoTutorial />
 
       {/* Hero */}
       <section className="text-center space-y-4 py-8">
