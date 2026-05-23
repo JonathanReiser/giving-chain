@@ -5,6 +5,7 @@ import { NeedCard } from './NeedCard'
 import { formatUsdc, NEED_STATUS, ADDRESSES } from '@/lib/contracts'
 import { Loader2, ExternalLink, ShieldCheck, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
+import { DemoFaucet } from './DemoFaucet'
 
 export function BrowsePage() {
   const { count, isLoading: countLoading } = useNeedCount()
@@ -36,6 +37,9 @@ export function BrowsePage() {
           only be spent at the assigned store. No exceptions.
         </p>
       </section>
+
+      {/* Demo faucet — only shows when connected with no USDC */}
+      <DemoFaucet />
 
       {/* The big comparison */}
       <section className="grid grid-cols-1 sm:grid-cols-2 gap-4">

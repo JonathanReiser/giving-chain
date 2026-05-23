@@ -12,6 +12,7 @@ import { formatUsdc, NEED_STATUS, ADDRESSES, ABIS, ipfsUrl } from '@/lib/contrac
 import { ExternalLink, ArrowLeft, Loader2, Store, Heart, ShieldCheck, Wallet } from 'lucide-react'
 import Link from 'next/link'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
+import { DemoFaucet } from '@/components/DemoFaucet'
 
 function ConnectPrompt() {
   return (
@@ -172,6 +173,9 @@ export default function NeedDetailPage() {
           </span>
         </div>
       )}
+
+      {/* Demo faucet — shows when connected with no USDC */}
+      <DemoFaucet />
 
       {/* Funding progress + donate */}
       <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 space-y-4">
