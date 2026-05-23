@@ -43,10 +43,31 @@ export default function AdminPage() {
 
   if (!isOwner) {
     return (
-      <div className="text-center py-24">
-        <AlertCircle className="mx-auto mb-3 text-red-400" size={32} />
-        <p className="text-gray-400">This wallet is not the contract owner.</p>
-        <p className="text-xs text-gray-600 mt-1">Owner: {owner ?? 'loading…'}</p>
+      <div className="max-w-lg mx-auto py-24 space-y-4">
+        <div className="flex justify-center">
+          <AlertCircle className="text-red-400" size={32} />
+        </div>
+        <p className="text-center text-gray-400">Not authorized</p>
+        <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 text-xs font-mono space-y-2">
+          <div className="flex justify-between gap-4">
+            <span className="text-gray-500 shrink-0">Your wallet</span>
+            <span className="text-yellow-400 break-all">{address ?? 'not connected'}</span>
+          </div>
+          <div className="flex justify-between gap-4">
+            <span className="text-gray-500 shrink-0">Contract owner</span>
+            <span className="text-green-400 break-all">{owner ?? 'loading…'}</span>
+          </div>
+          <div className="flex justify-between gap-4">
+            <span className="text-gray-500 shrink-0">Match</span>
+            <span className={owner ? 'text-red-400' : 'text-gray-500'}>
+              {owner ? 'no' : 'waiting for contract read…'}
+            </span>
+          </div>
+          <div className="flex justify-between gap-4">
+            <span className="text-gray-500 shrink-0">Escrow address</span>
+            <span className="text-gray-400 break-all">{ADDRESSES.donationEscrow}</span>
+          </div>
+        </div>
       </div>
     )
   }
