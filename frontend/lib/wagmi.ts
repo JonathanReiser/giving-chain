@@ -10,8 +10,9 @@ import {
 import { createConfig, http } from 'wagmi'
 import { base, baseSepolia } from 'wagmi/chains'
 
-// Always show Coinbase Smart Wallet — no extension or seed phrase needed
-coinbaseWallet.preference = 'smartWalletOnly'
+// Show Smart Wallet (passkey/Face ID) for new users, Coinbase Wallet
+// app for existing users — broadest compatibility
+coinbaseWallet.preference = { options: 'all' }
 
 const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || ''
 
