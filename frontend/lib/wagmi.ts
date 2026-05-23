@@ -1,17 +1,13 @@
 'use client'
 
-import { http, createConfig } from 'wagmi'
+import { getDefaultConfig } from '@rainbow-me/rainbowkit'
 import { base, baseSepolia } from 'wagmi/chains'
-import { injected, walletConnect } from 'wagmi/connectors'
+import { http } from 'wagmi'
 
-const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || ''
-
-export const wagmiConfig = createConfig({
+export const wagmiConfig = getDefaultConfig({
+  appName: 'GivingChain',
+  projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || '',
   chains: [baseSepolia, base],
-  connectors: [
-    injected(),
-    walletConnect({ projectId }),
-  ],
   transports: {
     [baseSepolia.id]: http(),
     [base.id]: http(),

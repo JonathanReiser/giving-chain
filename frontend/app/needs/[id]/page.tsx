@@ -9,8 +9,26 @@ import { useIPFSData } from '@/hooks/useIPFS'
 import { ProgressBar } from '@/components/ProgressBar'
 import { DonateModal } from '@/components/DonateModal'
 import { formatUsdc, NEED_STATUS, ADDRESSES, ABIS, ipfsUrl } from '@/lib/contracts'
-import { ExternalLink, ArrowLeft, Loader2, Store, Heart, ShieldCheck } from 'lucide-react'
+import { ExternalLink, ArrowLeft, Loader2, Store, Heart, ShieldCheck, Wallet } from 'lucide-react'
 import Link from 'next/link'
+import { ConnectButton } from '@rainbow-me/rainbowkit'
+
+function ConnectPrompt() {
+  return (
+    <ConnectButton.Custom>
+      {({ openConnectModal, mounted }) => (
+        <button
+          onClick={openConnectModal}
+          disabled={!mounted}
+          className="w-full flex items-center justify-center gap-2 bg-green-600 hover:bg-green-500 disabled:opacity-50 rounded-xl py-3 font-semibold transition-colors"
+        >
+          <Wallet size={16} />
+          Connect to Donate
+        </button>
+      )}
+    </ConnectButton.Custom>
+  )
+}
 
 const CATEGORY_EMOJI: Record<string, string> = {
   food: '🛒', medicine: '💊', clothing: '👕',
@@ -177,9 +195,12 @@ export default function NeedDetailPage() {
               Donate USDC
             </button>
           ) : (
-            <p className="text-center text-sm text-gray-400 py-2">
-              Connect your wallet to donate.
-            </p>
+            <div className="space-y-2">
+              <ConnectPrompt />
+              <p className="text-center text-xs text-gray-500">
+                No crypto account? Use <span className="text-blue-400">Coinbase Wallet</span> to sign in with Face ID or your fingerprint — no seed phrase needed.
+              </p>
+            </div>
           )
         )}
 
