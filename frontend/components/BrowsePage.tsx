@@ -1,20 +1,25 @@
 'use client'
 
-import { useNeedCount, useAllNeeds, useDonationCount } from '@/hooks/useNeeds'
+import { useNeedCount, useAllNeeds, useDonationCount, useDonationLog } from '@/hooks/useNeeds'
 import { NeedCard } from './NeedCard'
-import { formatUsdc, NEED_STATUS } from '@/lib/contracts'
-import { Loader2, Lock, Search, Receipt } from 'lucide-react'
+import { formatUsdc, NEED_STATUS, ADDRESSES } from '@/lib/contracts'
+import { Loader2, ExternalLink, ShieldCheck, ArrowRight } from 'lucide-react'
+import Link from 'next/link'
 
 export function BrowsePage() {
   const { count, isLoading: countLoading } = useNeedCount()
-  const { needs, isLoading: needsLoading } = useAllNeeds(count)
-  const { count: donationCount } = useDonationCount()
+  const { needs, isLoading: needsLoading }  = useAllNeeds(count)
+  const { count: donationCount }            = useDonationCount()
+  const { donations }                       = useDonationLog(donationCount)
 
-  const openNeeds     = needs.filter((n) => n.need && NEED_STATUS[n.need.status] === 'Open')
+  const openNeeds      = needs.filter((n) => n.need && NEED_STATUS[n.need.status] === 'Open')
   const fulfilledNeeds = needs.filter((n) => n.need && NEED_STATUS[n.need.status] === 'Fulfilled')
-  const totalRaised   = needs.reduce((sum, n) => sum + (n.balance ?? 0n), 0n)
+  const totalRaised    = needs.reduce((sum, n) => sum + (n.balance ?? 0n), 0n)
 
   const isLoading = countLoading || needsLoading
+
+  // Show up to 5 most recent donations
+  const recentDonations = [...donations].reverse().slice(0, 5)
 
   return (
     <div className="space-y-14">
@@ -22,82 +27,168 @@ export function BrowsePage() {
       {/* Hero */}
       <section className="text-center space-y-4 py-8">
         <h1 className="text-4xl sm:text-5xl font-bold tracking-tight">
-          Help real people.{' '}
-          <span className="text-green-400">See exactly where it goes.</span>
+          Give with{' '}
+          <span className="text-green-400">complete proof.</span>
         </h1>
         <p className="text-gray-300 text-lg max-w-2xl mx-auto leading-relaxed">
-          GivingChain is like a donation platform — but every dollar is publicly tracked
-          from the moment you give to the moment the goods are purchased. No middlemen,
-          no mystery, no trust required.
+          Like GoFundMe — except you never have to wonder where your money went.
+          Every donation is a permanent public record, and funds can
+          only be spent at the assigned store. No exceptions.
         </p>
       </section>
 
-      {/* How it works */}
-      <section className="space-y-4">
-        <h2 className="text-center text-xl font-semibold text-gray-300">How it works</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      {/* The big comparison */}
+      <section className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {/* GoFundMe side */}
+        <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 space-y-4">
+          <div className="text-sm font-semibold text-gray-500 uppercase tracking-wider">Traditional platforms</div>
+          <ul className="space-y-3 text-sm text-gray-400">
+            {[
+              'You donate and receive a thank-you email.',
+              'The money enters the organization\'s bank account.',
+              'You have no way to verify it reached the right person.',
+              'You trust the receipt is real — you just never see it.',
+              'Funds could be redirected. You\'d never know.',
+            ].map((item) => (
+              <li key={item} className="flex gap-2">
+                <span className="text-red-500 shrink-0 mt-0.5">✗</span>
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* GivingChain side */}
+        <div className="bg-gray-900 border border-green-900 rounded-2xl p-6 space-y-4">
+          <div className="text-sm font-semibold text-green-500 uppercase tracking-wider">GivingChain</div>
+          <ul className="space-y-3 text-sm text-gray-300">
+            {[
+              'Your donation is recorded on the blockchain — a public ledger anyone can read.',
+              'Funds are locked in a smart contract, not a bank account.',
+              'The contract only releases money to the pre-assigned store. No one can change that.',
+              'After purchase, the receipt is stored permanently and publicly.',
+              'Every step is verifiable by anyone in the world, forever.',
+            ].map((item) => (
+              <li key={item} className="flex gap-2">
+                <span className="text-green-400 shrink-0 mt-0.5">✓</span>
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      {/* What "on the blockchain" actually means */}
+      <section className="bg-gray-900 border border-gray-800 rounded-2xl p-6 sm:p-8 space-y-5">
+        <div className="flex items-center gap-2">
+          <ShieldCheck className="text-green-400 shrink-0" size={20} />
+          <h2 className="text-lg font-semibold">What does "on the blockchain" actually mean?</h2>
+        </div>
+        <p className="text-gray-400 text-sm leading-relaxed">
+          Think of the blockchain like a shared spreadsheet that thousands of computers around the world
+          keep a copy of. Once something is written to it, it cannot be changed or deleted — by anyone,
+          including us. Every donation made on GivingChain is written to that spreadsheet the moment it
+          happens. You can look it up yourself right now.
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
           {[
             {
-              step: '1',
-              icon: Search,
-              title: 'Browse a real need',
-              desc: 'Each need is posted by a verified person — a family that needs groceries, medicine, or household essentials. You can read their story before you give.',
+              label: 'The donation contract',
+              desc: 'The code that holds your money. Open source, readable by anyone.',
+              href: `https://sepolia.basescan.org/address/${ADDRESSES.donationEscrow}`,
+              cta: 'View on Basescan →',
             },
             {
-              step: '2',
-              icon: Lock,
-              title: "Donate and it's locked in",
-              desc: 'Your donation is held securely until the full amount is raised. It can only be released to the assigned store — nobody can redirect it or pocket it.',
+              label: 'Every transaction',
+              desc: 'A live feed of every donation ever made. Public, permanent, uneditable.',
+              href: `https://sepolia.basescan.org/address/${ADDRESSES.donationEscrow}#events`,
+              cta: 'See all transactions →',
             },
             {
-              step: '3',
-              icon: Receipt,
-              title: 'See the purchase happen',
-              desc: 'Once the goods are bought, a receipt is posted. You can verify that your money bought exactly what it was supposed to — anytime, forever.',
+              label: 'This platform\'s transparency page',
+              desc: 'A human-readable view of all donations and fulfilled needs with receipts.',
+              href: '/transparency',
+              cta: 'View transparency log →',
+              internal: true,
             },
-          ].map(({ step, icon: Icon, title, desc }) => (
-            <div key={step} className="bg-gray-900 border border-gray-800 rounded-2xl p-5 flex gap-4">
-              <div className="shrink-0 w-8 h-8 rounded-full bg-green-600 flex items-center justify-center font-bold text-sm">
-                {step}
-              </div>
-              <div>
-                <div className="font-semibold mb-1">{title}</div>
-                <div className="text-sm text-gray-400 leading-relaxed">{desc}</div>
-              </div>
+          ].map(({ label, desc, href, cta, internal }) => (
+            <div key={label} className="bg-gray-800 rounded-xl p-4 space-y-2">
+              <div className="font-medium text-gray-200">{label}</div>
+              <div className="text-gray-500 text-xs leading-relaxed">{desc}</div>
+              {internal
+                ? <Link href={href} className="text-green-400 hover:text-green-300 text-xs flex items-center gap-1">{cta}</Link>
+                : <a href={href} target="_blank" rel="noopener noreferrer"
+                    className="text-green-400 hover:text-green-300 text-xs flex items-center gap-1">
+                    {cta} <ExternalLink size={10} />
+                  </a>
+              }
             </div>
           ))}
         </div>
       </section>
 
-      {/* Why this is different */}
-      <section className="bg-gray-900 border border-gray-800 rounded-2xl p-6 sm:p-8">
-        <h2 className="text-lg font-semibold mb-3">Why this is different from GoFundMe or a traditional charity</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-3 text-sm text-gray-400">
-          {[
-            ['With most charities', "You donate and hope it's used well. You get a thank-you email."],
-            ['With GivingChain', 'You donate and can verify exactly what was purchased, when, and from where.'],
-            ['With most platforms', "Funds pass through the organization's bank account before reaching anyone."],
-            ['With GivingChain', 'Funds are locked in a smart contract and go directly to the vendor — the organization never touches them.'],
-          ].map(([label, text]) => (
-            <div key={label} className="flex gap-2">
-              <span className={`shrink-0 font-medium ${label.startsWith('With GivingChain') ? 'text-green-400' : 'text-gray-500'}`}>
-                {label.startsWith('With GivingChain') ? '✓' : '✗'}
-              </span>
-              <span><span className="font-medium text-gray-300">{label}:</span> {text}</span>
-            </div>
-          ))}
+      {/* Live donation feed */}
+      <section className="space-y-3">
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-semibold flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse inline-block" />
+            Live donation record
+          </h2>
+          <Link href="/transparency" className="text-sm text-green-400 hover:text-green-300 flex items-center gap-1">
+            Full log <ArrowRight size={13} />
+          </Link>
         </div>
-        <p className="text-xs text-gray-600 mt-4">
-          For the technically curious: donations are held in a smart contract on the Base blockchain. Funds can only be released to a pre-approved vendor address once the full amount is raised. Every transaction is publicly verifiable on-chain.
+
+        {recentDonations.length === 0 ? (
+          <div className="bg-gray-900 border border-dashed border-gray-800 rounded-2xl p-8 text-center space-y-2">
+            <p className="text-gray-400 text-sm">No donations yet — be the first.</p>
+            <p className="text-gray-600 text-xs">
+              When someone donates, their transaction will appear here as a permanent public record
+              that anyone can verify on the blockchain.
+            </p>
+          </div>
+        ) : (
+          <div className="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden">
+            <div className="text-xs text-gray-600 px-4 py-2 border-b border-gray-800 flex gap-4">
+              <span className="w-28 shrink-0">Donor</span>
+              <span className="w-20 shrink-0">Amount</span>
+              <span className="flex-1">Need</span>
+              <span className="shrink-0">Proof</span>
+            </div>
+            {recentDonations.map((d, i) => (
+              <div key={i} className="flex items-center gap-4 px-4 py-3 border-b border-gray-800/50 last:border-0 text-sm">
+                <span className="w-28 shrink-0 font-mono text-gray-400 text-xs truncate">
+                  {d!.donor.slice(0, 6)}…{d!.donor.slice(-4)}
+                </span>
+                <span className="w-20 shrink-0 text-green-400 font-medium">
+                  ${formatUsdc(d!.amount)}
+                </span>
+                <span className="flex-1 text-gray-400 text-xs">
+                  Need #{d!.needId.toString()}
+                </span>
+                <a
+                  href={`https://sepolia.basescan.org/address/${ADDRESSES.donationEscrow}#events`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="shrink-0 text-green-400 hover:text-green-300 flex items-center gap-1 text-xs"
+                >
+                  Verify <ExternalLink size={10} />
+                </a>
+              </div>
+            ))}
+          </div>
+        )}
+        <p className="text-xs text-gray-600 text-center">
+          These transactions are written to the Base blockchain and cannot be altered or deleted by anyone.
         </p>
       </section>
 
       {/* Stats */}
       <div className="grid grid-cols-3 gap-4 text-center">
         {[
-          { label: 'Total raised',       value: `$${formatUsdc(totalRaised)}` },
-          { label: 'Needs fulfilled',    value: fulfilledNeeds.length.toString() },
-          { label: 'Donations made',     value: donationCount.toString() },
+          { label: 'Total raised',    value: `$${formatUsdc(totalRaised)}` },
+          { label: 'Needs fulfilled', value: fulfilledNeeds.length.toString() },
+          { label: 'Donations made',  value: donationCount.toString() },
         ].map(({ label, value }) => (
           <div key={label} className="bg-gray-900 border border-gray-800 rounded-2xl py-5">
             <div className="text-2xl font-bold text-green-400">{value}</div>
