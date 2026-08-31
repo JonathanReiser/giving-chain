@@ -1,5 +1,29 @@
 # 🔵 Base Ecosystem Fund Grant Proposal: Q-Giving (Quantum AI Governed Philanthropy on Base)
 
+> ## ⚠️ WITHDRAWN — NOT SUBMITTED, AND ITS CLAIMS DO NOT HOLD
+>
+> **Dated 2026-08-31.** This proposal was never submitted to the Base Ecosystem
+> Fund. A LinkedIn post at the time stated that it had been; that statement was
+> incorrect and has been corrected.
+>
+> Its technical claims are withdrawn regardless. The proposal describes an
+> "80% Quantum GHZ Entanglement Consensus Proof" gating grant disbursement,
+> implemented as `Q_AIGivingOracle.sol`. That contract verified nothing: it was
+> owner-only, accepted the impact score as an argument, and its "Qiskit proof
+> hash" was a SHA-256 of the asserted number itself, so recomputing it proved
+> only that the number had been typed. It was never deployed, never called by
+> any other contract or by the frontend, and never tested. It has been deleted
+> from this repository.
+>
+> The claims it inherited from the linked `quantum-orch-or` project — 835,000
+> Snapshot DAO votes, an 86.7% error reduction, R² = 0.98, entanglement
+> doubling public-good approval — are retracted in full. See
+> [CORRECTIONS.md](https://github.com/JonathanReiser/quantum-orch-or/blob/main/CORRECTIONS.md).
+> The Zenodo record cited below is retracted and superseded.
+>
+> This file is retained unedited below as a record of what was written. Do not
+> cite it.
+
 **Project Name:** Q-Giving (giving-chain + q-ai-governance)  
 **Applicant Name:** Jonathan Reiser  
 **Email:** `jdreiser1@gmail.com`  
